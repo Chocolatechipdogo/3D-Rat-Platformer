@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 playerVelocity;
     private bool groundedPlayer;
     public float playerSpeed = 2.0f;
-    private float jumpHeight = 1.0f;
+    public float jumpHeight = 0.5f;
     private float gravityValue = -9.81f;
 
     // Start is called before the first frame update
@@ -20,12 +20,14 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //to check if on ground
         groundedPlayer = controller.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
 
+        //movement
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         controller.Move(move * Time.deltaTime * playerSpeed);
 
@@ -34,6 +36,16 @@ public class PlayerMovement : MonoBehaviour
             gameObject.transform.forward = move;
         }
 
-        //section for player jump
+
+        //jump
+
+        if (Input.GetButtonDown("Jump") && groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
+        }
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+
     }
 }
