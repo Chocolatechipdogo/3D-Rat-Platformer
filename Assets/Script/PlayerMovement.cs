@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        readyToJump = true;
     }
 
     
@@ -90,9 +91,9 @@ public class PlayerMovement : MonoBehaviour
 
         
 
-        if (Input.GetKey(KeyCode.Space) && grounded)
+        if (Input.GetKey(KeyCode.Space) && readyToJump && grounded)
         {
-            Debug.Log("Entered the if to jump");
+           
             readyToJump = false;
 
             Jump();
@@ -115,6 +116,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (!grounded)
         {
+            moveDirection.Set(moveDirection.x, moveDirection.y, +moveDirection.z);
             rb.AddForce(moveDirection.normalized * moveSpeed * 5.0f * airMultiplier, ForceMode.Force);
                       
         }
@@ -138,7 +140,6 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, 0f);
 
         rb.AddForce(-transform.forward * jumpForce, ForceMode.Impulse);
-        Debug.Log(readyToJump);
     }
 
     private void RestJump()
