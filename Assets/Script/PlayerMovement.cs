@@ -37,12 +37,20 @@ public class PlayerMovement : MonoBehaviour
     }
 
     
+    //If anything rigidBody for movement add here
+    void FixedUpdate()
+    {
+        PlayerMove();
+    }
 
     // Update is called once per frame
     void Update()
     {
         //to check if on ground
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, isGround);
+
+        PlayerInput();
+        SpeedControl();
 
         if (grounded)
         {
@@ -54,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //movement
+        /*
         MyInput();
         SpeedControl();
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
@@ -66,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.AddForce(moveDirection.normalized * moveSpeed * 5.0f * airMultiplier, ForceMode.Force);
         }
-       
+       */
 
 
 
@@ -74,22 +83,41 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void MyInput()
+    private void PlayerInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        //jump Input
-       /* if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        
+
+        if (Input.GetKey(KeyCode.Space) && grounded)
         {
+            Debug.Log("Entered the if to jump");
             readyToJump = false;
 
             Jump();
-            Debug.Log(readyToJump);
 
             Invoke(nameof(RestJump), jumpCooldown);
         }
-       */
+
+
+    }
+
+    private void PlayerMove()
+    {
+        
+        //SpeedControl();
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        if (grounded)
+        {
+            rb.AddForce(moveDirection.normalized * moveSpeed * 5.0f, ForceMode.Force);
+        }
+        else if (!grounded)
+        {
+            rb.AddForce(moveDirection.normalized * moveSpeed * 5.0f * airMultiplier, ForceMode.Force);
+                      
+        }
     }
 
     private void SpeedControl() 
@@ -105,11 +133,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-   /* private void Jump()
+    private void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, 0f);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        rb.AddForce(-transform.forward * jumpForce, ForceMode.Impulse);
         Debug.Log(readyToJump);
     }
 
@@ -117,5 +145,5 @@ public class PlayerMovement : MonoBehaviour
     {
         readyToJump = true;
     }
-   */
+   
 }
